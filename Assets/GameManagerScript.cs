@@ -6,24 +6,12 @@ public class GameManagerScript : MonoBehaviour
 {
     public GameObject playerPrefab;
     public GameObject boxPrefab;
+
+    public GameObject clearText;
+
+
     int[,] map;          // レベルデザイン用の配列
     GameObject[,] field; // ゲーム管理用の配列
-
-    void PrintArray()
-    {
-        //// 文字列の宣言と初期化
-        //string debugText = "";
-        //for (int y = 0; y < map.GetLength(0); y++)
-        //{
-        //    for (int x = 0; x < map.GetLength(1); x++)
-        //    {
-        //        debugText += map[y, x].ToString() + ",";
-        //    }
-        //    debugText += "\n";
-        //}
-        //// 結合した文字列を出力
-        //Debug.Log(debugText);
-    }
 
     Vector2Int GetPlayerIndex()
     {
@@ -63,26 +51,52 @@ public class GameManagerScript : MonoBehaviour
             new Vector3(moveTo.x - field.GetLength(1) / 2, -moveTo.y + field.GetLength(0) / 2, 0);
         field[moveTo.y, moveTo.x] = field[moveFrom.y, moveFrom.x];
         field[moveFrom.y, moveFrom.x] = null;
+
+        return true;
+    }
+
+    bool IsCleard()
+    {
+        // Vector2Int型の可変長配列の作成
+        List<Vector2Int> goals = new List<Vector2Int>();
+
+        for(int y = 0;y<map.GetLength(0);y++)
+        {
+            for(int x=0;x<map.GetLength(1);x++)
+            {
+                // 格納場所か否かを判断
+                if (map[y,x] == 3)
+                {
+                    // 格納場所のインデックスを控えておく
+                    goals.Add(new Vector2Int(x, y));
+                }
+            }
+        }
+        // 要素数はgoals.Countで取得
+        for(int i = 0;i<goals.Count;i++)
+        {
+            GameObject f = field[goals[i].y, goals[i].x];
+            if (f == null || f.tag != "Box")
+            {
+                // 一つでも箱が無かったら条件未達成
+                return false;
+            }
+        }
+        // 条件未達成でなければ条件達成
         return true;
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        //GameObject instance = Instantiate(
-        //    playerPrefab,
-        //    new Vector3(0, 0, 0),
-        //    Quaternion.identity
-        //);
-
         // 配列の実態の作成と初期化
         map = new int[,] {
             { 0, 0, 0, 0, 0, 0, 0},
-            { 0, 0, 0, 0, 0, 0, 0},
+            { 0, 3, 3, 0, 0, 0, 0},
             { 0, 2, 2, 0, 0, 0, 0},
-            { 0, 2, 2, 1, 0, 2, 0},
+            { 0, 0, 0, 1, 0, 2, 0},
             { 0, 0, 0, 0, 0, 2, 0},
-            { 0, 0, 0, 0, 0, 0, 0},
+            { 0, 0, 0, 0, 0, 3, 0},
             { 0, 0, 0, 0, 0, 0, 0}
         };
         field = new GameObject
@@ -97,7 +111,6 @@ public class GameManagerScript : MonoBehaviour
             {
                 if (map[y, x] == 1)
                 {
-                    //GameObject instance = Instantiate(playerPrefab, new Vector3(x, map.GetLength(0) - y, 0), Quaternion.identity);
                     field[y, x] = Instantiate(
                         playerPrefab,
                         new Vector3(x - map.GetLength(1) / 2, -y + map.GetLength(0) / 2, 0),
@@ -114,9 +127,6 @@ public class GameManagerScript : MonoBehaviour
                 }
             }
         }
-
-
-        //PrintArray();
     }
 
     // Update is called once per frame
@@ -128,7 +138,12 @@ public class GameManagerScript : MonoBehaviour
             Vector2Int playerIndex = GetPlayerIndex();
 
             MoveNumber("Player", playerIndex, playerIndex + new Vector2Int(1, 0));
-            //PrintArray();
+
+            // もしクリアしていたら
+            if (IsCleard())
+            {
+                clearText.SetActive(true);
+            }
         }
 
         // 左移動
@@ -137,7 +152,12 @@ public class GameManagerScript : MonoBehaviour
             Vector2Int playerIndex = GetPlayerIndex();
 
             MoveNumber("Player", playerIndex, playerIndex + new Vector2Int(-1, 0));
-            //PrintArray();
+
+            // もしクリアしていたら
+            if (IsCleard())
+            {
+                clearText.SetActive(true);
+            }
         }
 
         // 上移動
@@ -146,7 +166,12 @@ public class GameManagerScript : MonoBehaviour
             Vector2Int playerIndex = GetPlayerIndex();
 
             MoveNumber("Player", playerIndex, playerIndex + new Vector2Int(0, -1));
-            //PrintArray();
+
+            // もしクリアしていたら
+            if (IsCleard())
+            {
+                clearText.SetActive(true);
+            }
         }
 
         // 下移動
@@ -155,7 +180,12 @@ public class GameManagerScript : MonoBehaviour
             Vector2Int playerIndex = GetPlayerIndex();
 
             MoveNumber("Player", playerIndex, playerIndex + new Vector2Int(0, 1));
-            //PrintArray();
+
+            // もしクリアしていたら
+            if (IsCleard())
+            {
+                clearText.SetActive(true);
+            }
         }
     }
 }
