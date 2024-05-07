@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,6 +8,7 @@ public class GameManagerScript : MonoBehaviour
     public GameObject playerPrefab;
     public GameObject boxPrefab;
     public GameObject goalPrefab;
+    public GameObject particlePrefab;
 
     public GameObject clearText;
 
@@ -52,6 +54,15 @@ public class GameManagerScript : MonoBehaviour
             new Vector3(moveTo.x - field.GetLength(1) / 2, -moveTo.y + field.GetLength(0) / 2, 0);
         field[moveTo.y, moveTo.x] = field[moveFrom.y, moveFrom.x];
         field[moveFrom.y, moveFrom.x] = null;
+
+        for (int i = 0; i < 5; i++)
+        {
+            Instantiate(
+                particlePrefab,
+                new Vector3(moveFrom.x - map.GetLength(1) / 2, -moveFrom.y + map.GetLength(0) / 2, 0),
+                Quaternion.identity
+            );
+        }
 
         return true;
     }
