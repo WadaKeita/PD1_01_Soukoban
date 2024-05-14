@@ -24,6 +24,9 @@ public class Move : MonoBehaviour
 
     public void MoveTo(Vector3 newDestination)
     {
+        // 音を鳴らす
+        //gameObject.GetComponent<AudioSource>();
+
         // 経過時間を初期化
         timeErapsed = 0;
         // 移動中の可能性があるので、現在値とpositionに前回移動の目的地を代入

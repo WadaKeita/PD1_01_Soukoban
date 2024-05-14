@@ -2,6 +2,7 @@ using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using UnityEditor;
 using UnityEngine;
 
 public class GameManagerScript : MonoBehaviour
@@ -39,8 +40,9 @@ public class GameManagerScript : MonoBehaviour
         // 縦軸横軸の配列外参照をしていないか
         if (moveTo.y < 0 || moveTo.y >= field.GetLength(0)) { return false; }
         if (moveTo.x < 0 || moveTo.x >= field.GetLength(1)) { return false; }
-        // 壁が無いか
-        if(field[moveTo.y, moveTo.x] != null && field[moveTo.y, moveTo.x].tag == "Wall") { return false; }
+
+        // Wallタグを持っていたら進ませない
+        if (field[moveTo.y, moveTo.x] != null && field[moveTo.y, moveTo.x].tag == "Wall") { return false; }
 
         // Boxタグを持っていたら再帰処理
         if (field[moveTo.y, moveTo.x] != null && field[moveTo.y, moveTo.x].tag == "Box")
@@ -109,7 +111,53 @@ public class GameManagerScript : MonoBehaviour
 
     public void StageReset()
     {
-        
+
+        clearText.SetActive(false);
+
+        foreach (GameObject obj in field)
+        {
+            Destroy(obj);
+        }
+
+
+        // for (int y = 0; y < map.GetLength(0); y++)
+        //{
+        //    for (int x = 0; x < map.GetLength(1); x++)
+        //    {
+        //        if (map[y, x] == 1)
+        //        {
+        //            field[y, x] = Instantiate(
+        //                playerPrefab,
+        //                new Vector3(x - map.GetLength(1) / 2, -y + map.GetLength(0) / 2, 0),
+        //                Quaternion.identity
+        //            );
+        //        }
+        //        if (map[y, x] == 2)
+        //        {
+        //            field[y, x] = Instantiate(
+        //                boxPrefab,
+        //                new Vector3(x - map.GetLength(1) / 2, -y + map.GetLength(0) / 2, 0),
+        //                Quaternion.identity
+        //            );
+        //        }
+        //        if (map[y, x] == 3)
+        //        {
+        //            field[y, x] = Instantiate(
+        //                goalPrefab,
+        //                new Vector3(x - map.GetLength(1) / 2, -y + map.GetLength(0) / 2, 0),
+        //                Quaternion.identity
+        //            );
+        //        }
+        //        if (map[y, x] == 4)
+        //        {
+        //            field[y, x] = Instantiate(
+        //                wallPrefab,
+        //                new Vector3(x - map.GetLength(1) / 2, -y + map.GetLength(0) / 2, 0),
+        //                Quaternion.identity
+        //            );
+        //        }
+        //    }
+        //}
     }
 
     // Start is called before the first frame update
